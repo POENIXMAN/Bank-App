@@ -1,11 +1,11 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
  class Bank {
 
     public $accountsList;
-
 
     public function  __construct() {
         $this->accountsList=[];
