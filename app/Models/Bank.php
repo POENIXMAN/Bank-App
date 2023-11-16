@@ -2,7 +2,6 @@
 
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
-
  class Bank {
 
     public $accountsList;
@@ -43,10 +42,6 @@ use Illuminate\Database\Eloquent\Model;
             $index++;
         }
         return -1;
-    }
-
-    public function saveAccount($account) {
-        $account->save(); 
     }
 
     public function addCredit($index, $ammount)

@@ -1,10 +1,5 @@
 <?php
 
-namespace App\Models;
-use App\Models\Account;
-use App\Models\Bank;
-use App\Http\Controllers\Controller;
-
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,16 +17,20 @@ Route::get('/', function () {
     return view('main_menu');
 });
 
-Route::get('/form_create_account', function () {
+Route::get('/main-menu', function () {
+    return view('main_menu');
+});
+
+Route::get('/create-acc', function () {
     return view('form_create_account');
 });
 
-Route::post('/submit_form_create', [Controller::class,'createAccount']); 
+Route::post('/submit-form-create', [App\Http\Controllers\Controller::class, 'createAccount']);
 
-Route::get('/form_add_credit', function () {
+Route::get('/add-credit', function () {
     return view('form_add_credit');
 });
 
-Route::post('/submit_form_add', [Controller::class,'add_Ammount']); 
+Route::get('/display-acc', [App\Http\Controllers\Controller::class, 'getAccounts']);
 
-Route::get('/show_list', [Controller::class,'show_list']);
+Route::post('/submit-form-add-credit', [App\Http\Controllers\Controller::class, 'addCredit']);
