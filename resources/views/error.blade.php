@@ -14,6 +14,7 @@ and open the template in the editor.
 
 <body>
     <h3>Error, account not found</h3>
+    <a href="/main-menu">Back to Main Menu</a>
 </body>
 
 </html>
