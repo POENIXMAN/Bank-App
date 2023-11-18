@@ -52,6 +52,17 @@ class LoginRegisterController extends Controller
 
         $credentials = $request->only('email', 'password');
         Auth::attempt($credentials);
+        $user = Auth::user();
+
+            // Retrieve additional user details from the database
+            $userDetails = User::select('id', 'name', 'email')->find($user->id);
+
+            // Start a session and store user ID and name
+            $request->session()->put('user', [
+                'id' => $userDetails->id,
+                'name' => $userDetails->name,
+                'email' => $userDetails->email
+            ]);
         $request->session()->regenerate();
         return redirect()->route('dashboard')
             ->withSuccess('You have successfully registered & logged in!');
