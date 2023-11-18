@@ -14,8 +14,8 @@ use App\Http\Controllers\Auth\LoginRegisterController;
 */
 
 Route::get('/', function () {
-    return view('main_menu');
-})->name('main_menu');
+    return view('index');
+})->name('index');
 
 Route::controller(LoginRegisterController::class)->group(function() {
     Route::get('/register', 'register')->name('register');
@@ -25,3 +25,17 @@ Route::controller(LoginRegisterController::class)->group(function() {
     Route::get('/dashboard', 'dashboard')->name('dashboard');
     Route::post('/logout', 'logout')->name('logout');
 });
+
+Route::get('/create-acc', function () {
+    return view('form_create_account');
+});
+
+Route::post('/submit-form-create', [App\Http\Controllers\Controller::class, 'createAccount']);
+
+Route::get('/add-credit', function () {
+    return view('form_add_credit');
+});
+
+Route::get('/display-acc', [App\Http\Controllers\Controller::class, 'getAccounts']);
+
+Route::post('/submit-form-add-credit', [App\Http\Controllers\Controller::class, 'addCredit']);
