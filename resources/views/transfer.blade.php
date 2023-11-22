@@ -50,7 +50,7 @@
             <div class="form-group row">
                 <label for="amount" class="col-md-3 col-form-label text-md-right">Amount:</label>
                 <div class="col-md-6">
-                    <input type="text" class="form-control" id="amount" name="amount" required>
+                    <input type="number" class="form-control" id="amount" name="amount" required>
                     @if ($errors->has('amount'))
                         <span class="text-danger">{{ $errors->first('amount') }}</span>
                     @endif

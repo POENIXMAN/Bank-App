@@ -33,8 +33,7 @@ Route::controller(UserController::class)->group(function() {
     Route::get('/create-acc-view', 'create_acc_view')->name('create_acc_view');
     Route::post('/submit-form-create','createAccount')->name('createAccount');
 
-    Route::get('/add-credit', 'add_credit_view')->name('add_credit_view');
-    Route::post('/submit-form-addCredit','addCredit')->name('addCredit');
+    Route::get('/transactions', 'view_transactions')->name('view_transactions');
     
     Route::get('/display-acc', 'getAccounts')->name('getAccounts');
 

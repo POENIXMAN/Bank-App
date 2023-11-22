@@ -20,16 +20,25 @@
             <div class="form-group">
                 <label for="accountNum">Account Number:</label>
                 <input type="text" class="form-control" name="accountNum" id="accountNum">
+                @error('accountNum')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
             </div>
 
             <div class="form-group">
                 <label for="name">Client Name:</label>
                 <input type="text" class="form-control" name="name" id="name">
+                @error('name')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
             </div>
 
             <div class="form-group">
                 <label for="ammount">Starting Amount:</label>
                 <input type="text" class="form-control" name="ammount" id="ammount">
+                @error('ammount')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
             </div>
 
             <div class="form-group">
@@ -39,6 +48,9 @@
                     <option value="USD">USD</option>
                     <option value="EUR">EUR</option>
                 </select>
+                @error('currency')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
             </div>
 
             <div class="text-center">

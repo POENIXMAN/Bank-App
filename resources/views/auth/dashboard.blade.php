@@ -22,6 +22,6 @@
         </div>
     </div>
 
-    @include('main_menu')
+    @include('actions')
 
 @endsection

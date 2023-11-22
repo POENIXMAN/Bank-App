@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
+use App\Models\Transactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Routing\Controller as BaseController;
@@ -17,14 +18,17 @@ class UserController extends BaseController
             'LBP' => [
                 'USD' => 0.00066, // 1 LBP to USD
                 'EUR' => 0.00059, // 1 LBP to EUR
+                'LBP' => 1,
             ],
             'USD' => [
                 'LBP' => 1512.00, // 1 USD to LBP
                 'EUR' => 0.89,    // 1 USD to EUR
+                'USD' => 1,
             ],
             'EUR' => [
                 'LBP' => 1700.00, // 1 EUR to LBP
                 'USD' => 1.12,    // 1 EUR to USD
+                'EUR' => 1,
             ],
         ];
 
@@ -80,6 +84,12 @@ class UserController extends BaseController
     public function createAccount(Request $request)
     {
         if ($this->isLoggedin()) {
+            // check if ammount is more than 20 digits
+            // if (!preg_match('/^\d{1,20}(\.\d{1,2})?$/', $request['amount'])) {
+            //     return back()->withErrors([
+            //         'ammount' => 'The amount must be a valid number with a maximum of 20 digits and up to 2 decimal places',
+            //     ])->onlyInput('ammount');
+            // }            
             $newAccountData = [
                 'accountNum' => $request->input('accountNum'),
                 'clientName' => $request->input('name'),
@@ -87,34 +97,25 @@ class UserController extends BaseController
                 'currency' => $request->input('currency'),
                 'clientId' => $request->input('clientId'),
             ];
-            Account::createAccount($newAccountData);
-            return redirect('/main-menu');
+            $account = Account::createAccount($newAccountData);
+
+            // Retrieve the account ID directly
+            $accountId = $account->id;
+
+            DB::table('account_creation_requests')->insert([
+                'clientId' => $request->input('clientId'),
+                'accountId' => $accountId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            return redirect('/main-menu')
+                ->withSuccess('Account created successfully!');
         } else {
             return redirect()->route('login')
                 ->withErrors([
                     'email' => 'Please login to access the service',
                 ])->onlyInput('email');
         }
-    }
-
-    public function add_credit_view()
-    {
-        if (session('user')) {
-            view('form_add_credit');
-        } else {
-            return redirect()->route('login')
-                ->withErrors([
-                    'email' => 'Please login to access the service',
-                ])->onlyInput('email');
-        }
-    }
-
-    public function addCredit(Request $request)
-    {
-        $accountNum = $request->input('account_num');
-        $ammount = $request->input('ammount');
-        // add to database
-        return redirect('/main-menu');
     }
 
     public function getAccounts()
@@ -122,7 +123,6 @@ class UserController extends BaseController
         if ($this->isLoggedin()) {
             $clientId = session('user')['id'];
             $accounts = Account::where('clientId', $clientId)->get(['accountNum', 'clientName', 'ammount', 'currency'])->toArray();
-            // dd($accounts);
             return view('accounts_list', ['accounts' => $accounts]);
         } else {
             return redirect()->route('login')
@@ -159,6 +159,12 @@ class UserController extends BaseController
         $clientId = session('user')['id'];
         $accountNumFrom = $request->input('fromAccount');
 
+        if ($accountNumFrom == $request->input('toAccount')) {
+            return back()->withErrors([
+                'toAccount' => 'You cannot transfer money to the same account',
+            ]);
+        }
+
         $account = Account::where('accountNum', $accountNumFrom)->first(['clientId'])->toArray();
 
         if ($account && $clientId == $account['clientId']) {
@@ -175,12 +181,11 @@ class UserController extends BaseController
     private function processTransfer(Request $request, $accountNumFrom)
     {
         $accountTo = $request->input('toAccount');
-        $accountFrom = Account::where('accountNum', $accountNumFrom)->first(['currency', 'ammount'])->toArray();
+        $accountFrom = Account::where('accountNum', $accountNumFrom)->first(['id', 'currency', 'ammount'])->toArray();
 
         // Check if the accountNumTo exists
-        $toAccount = Account::where('accountNum', $accountTo)->get('id')->toArray();
-        // dd($toAccount);
-        if ($toAccount) {
+        $toAccount = Account::where('accountNum', $accountTo)->first(['id', 'currency'])->toArray();
+        if ($toAccount['id']) {
             $currency = $request->input('currency');
             $amount = $request->input('amount');
             $accountCurrency = $accountFrom['currency'];
@@ -188,6 +193,15 @@ class UserController extends BaseController
             // Convert currency if necessary
             if ($currency != $accountCurrency) {
                 $amountConverted = $this->convertCurrency($amount, $currency, $accountCurrency);
+            } else {
+                $amountConverted = $amount;
+            }
+
+            $accountToCurrency = $toAccount['currency'];
+            if ($currency != $accountToCurrency) {
+                $amountToSend = $this->convertCurrency($amountConverted, $accountCurrency, $accountToCurrency);
+            } else {
+                $amountToSend = $amountConverted;
             }
 
             // Check if there are sufficient funds
@@ -197,18 +211,19 @@ class UserController extends BaseController
 
                 try {
                     // Deduct amountConverted from accountFrom
-                    $accountFromId = Account::where('accountNum', $accountNumFrom)->value('id');
-                    $accountFrom = Account::find($accountFromId);
-                    dd($accountFrom);
-                    $accountFrom->amount -= $amountConverted;
-                    $accountFrom->update();
-
+                    Account::where('accountNum', $accountNumFrom)->decrement('ammount', $amountConverted);
                     // Add amount to accountTo
-                    $accountFrom = Account::where('accountNum', $accountTo)->first('id')->toArray();
-                    $accountTo = Account::find($accountFrom['id']);
-                    $toAccount->amount += $amount;
-                    $toAccount->update();
+                    Account::where('accountNum', $accountTo)->increment('ammount', $amountToSend);
 
+
+                    $transactionData = [
+                        'from_account_id' => $accountFrom['id'],
+                        'to_account_id' => $toAccount['id'],
+                        'amount' => $amount,
+                        'currency' => $currency,
+                    ];
+
+                    Transactions::createTransaction($transactionData);
                     // Commit the transaction
                     DB::commit();
 
@@ -233,48 +248,28 @@ class UserController extends BaseController
         }
     }
 
-
-    public function nottransferCredit(Request $request)
+    public function view_transactions()
     {
-        // Check if the user is logged in
-        if (!$this->isLoggedin()) {
+        if ($this->isLoggedin()) {
+            $clientId = session('user')['id'];
+            $accountsId = Account::where('clientId', $clientId)->get(['id']);
+            $transactions = Transactions::whereIn('from_account_id', $accountsId)
+                ->orWhereIn('to_account_id', $accountsId)
+                ->select([
+                    'from_account_id',
+                    'to_account_id',
+                    'amount',
+                    'currency',
+                    DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d at %H:%i:%s') as formatted_created_at"),
+                ])
+                ->get()
+                ->toArray();
+            return view('transactions', ['transactions' => $transactions]);
+        } else {
             return redirect()->route('login')
                 ->withErrors([
                     'email' => 'Please login to access the service',
                 ])->onlyInput('email');
-        }
-
-        // i want to check if the user has an account with the same accountNumFrom 
-        $clientId = session('user')['id'];
-        $accounts = Account::where('clientId', $clientId)->get(['accountNum'])->toArray();
-
-        $accountNumFrom = $request->input('accountNumFrom');
-        if (in_array($accountNumFrom, $accounts)) {
-            $accountTo = $request->input('accountNumTo');
-            $accountFrom = Account::where('accountNum', $accountNumFrom)->get(['currency', 'ammount'])->toArray();
-            if (!empty(Account::where('accountNum', $accountTo)->get(['id'])->toArray())) {
-                $currency = $request->input('currency');
-                $amount = $request->input('amount');
-                $accountCurrency = $accountFrom['currency'];
-                if ($currency != $accountCurrency) {
-                    $amount = $this->convertCurrency($amount, $currency, $accountCurrency);
-                }
-                if ($amount <= $accountFrom['ammount']) {
-                    // make the transaction
-
-
-                    return redirect()->route('main-menu')
-                        ->withSuccess('Transfer successful!');
-                }
-            }
-            return back()->withErrors([
-                'toAccount' => 'The account number does not exist',
-            ])->onlyInput('toAccount');
-        } else {
-            // AccountNumFrom does not exist, handle accordingly (e.g., return an error response)
-            return redirect()->route('main-menu')->withErrors([
-                'accountNumFrom' => 'The selected account does not exist or does not belong to you.',
-            ]);
         }
     }
 }

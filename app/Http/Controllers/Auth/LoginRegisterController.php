@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 class LoginRegisterController extends BaseController
 {
-    /**
+    /*
      * Instantiate a new LoginRegisterController instance.
      */
     public function __construct()
@@ -20,7 +20,7 @@ class LoginRegisterController extends BaseController
         ]);
     }
 
-    /**
+    /*
      * Display a registration form.
      */
     public function register()
@@ -28,11 +28,8 @@ class LoginRegisterController extends BaseController
         return view('auth.register');
     }
 
-    /**
+    /*
      * Store a new user.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -66,7 +63,7 @@ class LoginRegisterController extends BaseController
             ->withSuccess('You have successfully registered & logged in!');
     }
 
-    /**
+    /*
      * Display a login form.
      */
     public function login()
@@ -74,9 +71,8 @@ class LoginRegisterController extends BaseController
         return view('auth.login');
     }
 
-    /**
+    /*
      * Authenticate the user.
-
      */
     public function authenticate(Request $request)
     {
@@ -108,10 +104,8 @@ class LoginRegisterController extends BaseController
         ])->onlyInput('email');
     }
 
-    /**
+    /*
      * Display a dashboard to authenticated users.
-     *
-     * 
      */
     public function dashboard()
     {
@@ -125,7 +119,7 @@ class LoginRegisterController extends BaseController
             ])->onlyInput('email');
     }
 
-    /**
+    /*
      * Log out the user from application.
      */
     public function logout(Request $request)

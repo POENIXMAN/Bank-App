@@ -13,6 +13,7 @@ return new class extends Migration
             $table->unsignedBigInteger('from_account_id');
             $table->unsignedBigInteger('to_account_id');
             $table->decimal('amount', 10, 2);
+            $table->enum('currency', ['LBP', 'USD', 'EUR']); 
             $table->timestamps();
 
             $table->foreign('from_account_id')->references('id')->on('accounts');

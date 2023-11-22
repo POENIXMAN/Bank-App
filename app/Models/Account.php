@@ -11,6 +11,7 @@ class Account extends Model
     public $ammount;
     public $currency;
     public $clientId;
+    public $timestamps = true;
     protected $fillable = ['accountNum', 'clientName', 'ammount', 'currency', 'clientId'];
 
     public static function createAccount(array $data)
