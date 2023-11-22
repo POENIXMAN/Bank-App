@@ -10,11 +10,13 @@ return new class extends Migration
     {
         Schema::create('account_creation_requests', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('client_id');
+            $table->unsignedBigInteger('clientId');
+            $table->unsignedBigInteger('accountId');
             $table->enum('status', ['pending', 'approved', 'disapproved'])->default('pending');;
             $table->timestamps();
 
-            $table->foreign('client_id')->references('id')->on('users');
+            $table->foreign('clientId')->references('id')->on('users');
+            $table->foreign('accountId')->references('id')->on('accounts');
         });
     }
 

@@ -4,43 +4,50 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Main Menu</title>
+    <title>Create Account</title>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 
 <body>
-    <h1 style="margin-left:auto;margin-right:auto;width:fit-content">Create Account</h1>
+    <div class="container">
+        <h1 class="text-center mt-4">Create Account</h1>
 
-    <table border="0">
-        <tr>
+        <form action="/submit-form-create" method="post">
+            @csrf
+            <input type="hidden" name="clientId" value="{{ @session('user')['id'] }}">
 
-            <td>Account N° :</td>
-            <td>
-                <form action="/submit-form-create" method="post"> @csrf
-                    <input name="accountNum" type="text" />
-            </td>
-        </tr>
+            <div class="form-group">
+                <label for="accountNum">Account Number:</label>
+                <input type="text" class="form-control" name="accountNum" id="accountNum">
+            </div>
 
-        <tr>
-            <td>Client Name :</td>
-            <td><input name="name" type="text" /></td>
-        </tr>
-        <tr>
-            <td>Starting Ammount :</td>
-            <td><input name="ammount" type="text" /></td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <div align="center">
-                    <input type="submit" name="create" value="Create" />
-                </div>
-                </form>
-            </td>
+            <div class="form-group">
+                <label for="name">Client Name:</label>
+                <input type="text" class="form-control" name="name" id="name">
+            </div>
 
-        </tr>
+            <div class="form-group">
+                <label for="ammount">Starting Amount:</label>
+                <input type="text" class="form-control" name="ammount" id="ammount">
+            </div>
 
-    </table>
-    <p style="margin-left:auto;margin-right:auto;width:fit-content"><a href="/main-menu">Return to Main Menu</a></p>
+            <div class="form-group">
+                <label for="currency">Currency:</label>
+                <select class="form-control" name="currency" id="currency">
+                    <option value="LBP">LBP</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                </select>
+            </div>
 
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-lg">Create</button>
+            </div>
+        </form>
+
+        <p class="text-center mt-4"><a href="/main-menu">Return to Main Menu</a></p>
+    </div>
 </body>
 
 </html>

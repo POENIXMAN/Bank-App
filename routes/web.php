@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginRegisterController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,16 +27,15 @@ Route::controller(LoginRegisterController::class)->group(function() {
     Route::post('/logout', 'logout')->name('logout');
 });
 
-Route::get('/create-acc', function () {
-    return view('form_create_account');
+Route::controller(UserController::class)->group(function() {
+    Route::get('/main-menu', 'main_menu')->name('main-menu');
+
+    Route::get('/create-acc-view', 'create_acc_view')->name('create_acc_view');
+    Route::post('/submit-form-create','createAccount')->name('createAccount');
+
+    Route::get('/add-credit', 'add_credit_view')->name('add_credit_view');
+    Route::post('/submit-form-addCredit','addCredit')->name('addCredit');
+    
+    Route::get('/display-acc', 'getAccounts')->name('getAccounts');
+
 });
-
-Route::post('/submit-form-create', [App\Http\Controllers\Controller::class, 'createAccount']);
-
-Route::get('/add-credit', function () {
-    return view('form_add_credit');
-});
-
-Route::get('/display-acc', [App\Http\Controllers\Controller::class, 'getAccounts']);
-
-Route::post('/submit-form-add-credit', [App\Http\Controllers\Controller::class, 'addCredit']);

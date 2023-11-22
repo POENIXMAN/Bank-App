@@ -5,29 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Main Menu</title>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 
 <body>
-    <h1 style="margin-left:auto;margin-right:auto;width:fit-content">Accounts List</h1>
+    <div class="container">
+        <h1 class="text-center">Accounts List</h1>
 
-    <table border ="1">
-        <thead>
-            <tr>
-                <td>Account N°</td>
-                <td>Client</td>
-                <td>Ammount</td>
-            </tr>
-        </thead>
-        <?php
-        foreach ($accounts as $account) {
-            echo "<tr><td>$account->accountNum</td><td>$account->clientName</td><td>$account->ammount$</td></tr>";
-        }
-        ?>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Account N°</th>
+                    <th>Client</th>
+                    <th>Amount</th>
+                    <th>Currency</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($accounts as $account) {
+                    echo "<tr><td>{$account['accountNum']}</td><td>{$account['clientName']}</td><td>{$account['ammount']}$</td><td>{$account['currency']}$</td></tr>";
+                }
+                ?>
+            </tbody>
+        </table>
 
-    </table>
-
-    <p style="margin-left:auto;margin-right:auto;width:fit-content"><a href="/main-menu">Return to
-            Main Menu</a></p>
+        <p class="text-center"><a href="/main-menu">Return to Main Menu</a></p>
+    </div>
 
 </body>
 

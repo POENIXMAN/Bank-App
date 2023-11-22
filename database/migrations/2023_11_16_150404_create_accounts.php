@@ -14,13 +14,13 @@ return new class extends Migration
             $table->id();
             $table->string('accountNum')->unique();
             $table->string('ClientName');
-            $table->decimal('amount', 10, 2); // A decimal amount field with 10 total digits and 2 decimal places
+            $table->decimal('ammount', 10, 2); // A decimal amount field with 10 total digits and 2 decimal places
             $table->enum('currency', ['LBP', 'USD', 'EUR']); // Enum column for currency
-            $table->unsignedBigInteger('ClientID');
+            $table->unsignedBigInteger('ClientId');
             $table->timestamps();
 
             // Foreign key relationship with the users table
-            $table->foreign('ClientID')->references('id')->on('users');
+            $table->foreign('ClientId')->references('id')->on('users');
         });
     }
 

@@ -12,7 +12,9 @@
                         </div>
                     @else
                         <div class="alert alert-success">
-                            You are logged in!
+                            @if (session('user'))
+                                Welcome, {{ session('user')['name'] }}! You are now logged in
+                            @endif
                         </div>
                     @endif
                 </div>
@@ -21,5 +23,5 @@
     </div>
 
     @include('main_menu')
-    
+
 @endsection

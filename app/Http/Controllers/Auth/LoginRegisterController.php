@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class LoginRegisterController extends Controller
+class LoginRegisterController extends BaseController
 {
     /**
      * Instantiate a new LoginRegisterController instance.
@@ -141,6 +141,7 @@ class LoginRegisterController extends Controller
     {
         Auth::logout();
         $request->session()->invalidate();
+        $request->session()->forget('user');
         $request->session()->regenerateToken();
         return redirect()->route('login')
             ->withSuccess('You have logged out successfully!');;
