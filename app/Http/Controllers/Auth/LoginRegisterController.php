@@ -22,8 +22,6 @@ class LoginRegisterController extends BaseController
 
     /**
      * Display a registration form.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function register()
     {
@@ -70,8 +68,6 @@ class LoginRegisterController extends BaseController
 
     /**
      * Display a login form.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function login()
     {
@@ -80,9 +76,7 @@ class LoginRegisterController extends BaseController
 
     /**
      * Authenticate the user.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+
      */
     public function authenticate(Request $request)
     {
@@ -117,7 +111,7 @@ class LoginRegisterController extends BaseController
     /**
      * Display a dashboard to authenticated users.
      *
-     * @return \Illuminate\Http\Response
+     * 
      */
     public function dashboard()
     {
@@ -133,9 +127,6 @@ class LoginRegisterController extends BaseController
 
     /**
      * Log out the user from application.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function logout(Request $request)
     {

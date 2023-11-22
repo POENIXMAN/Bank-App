@@ -12,16 +12,6 @@ class Account extends Model
     public $currency;
     public $clientId;
     protected $fillable = ['accountNum', 'clientName', 'ammount', 'currency', 'clientId'];
-    public function __construct($accountNum = null, $clientName = null, $ammount = null, $currency = null, $clientId = null)
-    {
-        if ($accountNum != null && $clientName != null && $ammount != null && $currency != null && $clientId != null) {
-            $this->accountNum = $accountNum;
-            $this->clientName = $clientName;
-            $this->currency = $currency;
-            $this->ammount = $ammount;
-            $this->clientId = $clientId;
-        }
-    }
 
     public static function createAccount(array $data)
     {

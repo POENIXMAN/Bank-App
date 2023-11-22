@@ -38,4 +38,6 @@ Route::controller(UserController::class)->group(function() {
     
     Route::get('/display-acc', 'getAccounts')->name('getAccounts');
 
+    Route::get('/tranfer', 'transfer')-> name('transfer');
+    Route::post('/submit-transfer', 'transferCredit')->name('transferCredit');
 });
