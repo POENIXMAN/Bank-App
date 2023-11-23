@@ -29,7 +29,7 @@
                         <tr>
                             <td>{{ $account['accountNum'] }}</td>
                             <td>{{ $account['clientName'] }}</td>
-                            <td>{{ $account['ammount'] }}</td>
+                            <td>{{ $account['amount'] }}</td>
                             <td>{{ $account['currency'] }}</td>
                             <td>
                                 <form action="{{ route('transfer') }}" method="get">

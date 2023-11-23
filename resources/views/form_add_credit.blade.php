@@ -18,8 +18,8 @@
             </td>
             </tr>
             <tr>
-                <td>Ammount to Add</td>
-                <td><input name="ammount" type="text" /></td>
+                <td>Amount to Add</td>
+                <td><input name="amount" type="number" /></td>
             </tr>
             <tr>
                 <td colspan="2">

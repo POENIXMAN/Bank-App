@@ -6,27 +6,28 @@ use Illuminate\Database\Eloquent\Model;
 
 class Account extends Model
 {
+    protected $table = 'accounts'; 
     public $accountNum;
     public $clientName;
-    public $ammount;
+    public $amount;
     public $currency;
     public $clientId;
     public $timestamps = true;
-    protected $fillable = ['accountNum', 'clientName', 'ammount', 'currency', 'clientId'];
+    protected $fillable = ['accountNum', 'clientName', 'amount', 'currency', 'clientId'];
 
     public static function createAccount(array $data)
     {
         return self::create([
             'accountNum' => $data['accountNum'],
             'clientName' => $data['clientName'],
-            'ammount' => $data['ammount'],
+            'amount' => $data['amount'],
             'currency' => $data['currency'],
             'clientId' => $data['clientId'],
         ]);
     }
 
-    public function addCredit($addedAmmount)
+    public function addCredit($addedAmount)
     {
-        $this->ammount += $addedAmmount;
+        $this->amount += $addedAmount;
     }
 }

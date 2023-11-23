@@ -13,14 +13,14 @@ return new class extends Migration
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
             $table->string('accountNum')->unique();
-            $table->string('ClientName');
-            $table->decimal('ammount', 10, 2); // A decimal amount field with 10 total digits and 2 decimal places
+            $table->string('clientName');
+            $table->decimal('amount', 10, 2); // A decimal amount field with 10 total digits and 2 decimal places
             $table->enum('currency', ['LBP', 'USD', 'EUR']); // Enum column for currency
-            $table->unsignedBigInteger('ClientId');
+            $table->unsignedBigInteger('clientId');
             $table->timestamps();
 
             // Foreign key relationship with the users table
-            $table->foreign('ClientId')->references('id')->on('users');
+            $table->foreign('clientId')->references('id')->on('users');
         });
     }
 

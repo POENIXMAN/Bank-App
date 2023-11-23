@@ -34,9 +34,9 @@
             </div>
 
             <div class="form-group">
-                <label for="ammount">Starting Amount:</label>
-                <input type="text" class="form-control" name="ammount" id="ammount">
-                @error('ammount')
+                <label for="amount">Starting Amount:</label>
+                <input type="number" class="form-control" name="amount" id="amount">
+                @error('amount')
                     <small class="text-danger">{{ $message }}</small>
                 @enderror
             </div>

@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Models\Transactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Routing\Controller as BaseController;
 
 class UserController extends BaseController
@@ -84,16 +85,35 @@ class UserController extends BaseController
     public function createAccount(Request $request)
     {
         if ($this->isLoggedin()) {
-            // check if ammount is more than 20 digits
-            // if (!preg_match('/^\d{1,20}(\.\d{1,2})?$/', $request['amount'])) {
-            //     return back()->withErrors([
-            //         'ammount' => 'The amount must be a valid number with a maximum of 20 digits and up to 2 decimal places',
-            //     ])->onlyInput('ammount');
-            // }            
+
+            $validator = Validator::make($request->all(), [
+                'accountNum' => [
+                    'required',
+                    function ($attribute, $value, $fail) {
+                        // Check if an account with the same number already exists
+                        $userAccounts = Account::where('accountNum', $value)->exists();
+                        if ($userAccounts) {
+                            $fail("An account with the same account Number ($value) already exists.");
+                        }
+                    },
+                ],
+                'name' => 'required',
+                'amount' => 'required|numeric|min:0|max:99999999999999999999', // Ensure the amount has 20 digits or fewer
+                'currency' => 'required',
+                'clientId' => 'required',
+            ], [
+                'amount.max' => 'The amount should be 20 digits or less.',
+            ]);
+
+            if ($validator->fails()) {
+                return back()->withErrors($validator)->withInput();
+            }
+
+
             $newAccountData = [
                 'accountNum' => $request->input('accountNum'),
                 'clientName' => $request->input('name'),
-                'ammount' => $request->input('ammount'),
+                'amount' => $request->input('amount'),
                 'currency' => $request->input('currency'),
                 'clientId' => $request->input('clientId'),
             ];
@@ -122,7 +142,7 @@ class UserController extends BaseController
     {
         if ($this->isLoggedin()) {
             $clientId = session('user')['id'];
-            $accounts = Account::where('clientId', $clientId)->get(['accountNum', 'clientName', 'ammount', 'currency'])->toArray();
+            $accounts = Account::where('clientId', $clientId)->get(['accountNum', 'clientName', 'amount', 'currency'])->toArray();
             return view('accounts_list', ['accounts' => $accounts]);
         } else {
             return redirect()->route('login')
@@ -165,7 +185,7 @@ class UserController extends BaseController
             ]);
         }
 
-        $account = Account::where('accountNum', $accountNumFrom)->first(['clientId'])->toArray();
+        $account = Account::where('accountNum', $accountNumFrom)->first(['clientId']);
 
         if ($account && $clientId == $account['clientId']) {
             return $this->processTransfer($request, $accountNumFrom);
@@ -180,11 +200,11 @@ class UserController extends BaseController
 
     private function processTransfer(Request $request, $accountNumFrom)
     {
-        $accountTo = $request->input('toAccount');
-        $accountFrom = Account::where('accountNum', $accountNumFrom)->first(['id', 'currency', 'ammount'])->toArray();
+        $accountNumTo = $request->input('toAccount');
+        $accountFrom = Account::where('accountNum', $accountNumFrom)->first(['id', 'currency', 'amount'])->toArray();
 
         // Check if the accountNumTo exists
-        $toAccount = Account::where('accountNum', $accountTo)->first(['id', 'currency'])->toArray();
+        $toAccount = Account::where('accountNum', $accountNumTo)->first(['id', 'currency'])->toArray();
         if ($toAccount['id']) {
             $currency = $request->input('currency');
             $amount = $request->input('amount');
@@ -205,15 +225,15 @@ class UserController extends BaseController
             }
 
             // Check if there are sufficient funds
-            if ($amountConverted <= $accountFrom['ammount']) {
+            if ($amountConverted <= $accountFrom['amount']) {
                 // Start a database transaction
                 DB::beginTransaction();
 
                 try {
                     // Deduct amountConverted from accountFrom
-                    Account::where('accountNum', $accountNumFrom)->decrement('ammount', $amountConverted);
+                    Account::where('accountNum', $accountNumFrom)->decrement('amount', $amountConverted);
                     // Add amount to accountTo
-                    Account::where('accountNum', $accountTo)->increment('ammount', $amountToSend);
+                    Account::where('accountNum', $accountNumTo)->increment('amount', $amountToSend);
 
 
                     $transactionData = [
