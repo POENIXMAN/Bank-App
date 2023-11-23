@@ -2,6 +2,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginRegisterController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AgentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,7 @@ Route::controller(LoginRegisterController::class)->group(function() {
     Route::get('/login', 'login')->name('login');
     Route::post('/authenticate', 'authenticate')->name('authenticate');
     Route::get('/dashboard', 'dashboard')->name('dashboard');
+    Route::get('/agent-dashboard','agent_dashboard')->name('agent-dashboard');
     Route::post('/logout', 'logout')->name('logout');
 });
 
@@ -39,4 +41,9 @@ Route::controller(UserController::class)->group(function() {
 
     Route::get('/tranfer', 'transfer')-> name('transfer');
     Route::post('/submit-transfer', 'transferCredit')->name('transferCredit');
+});
+
+Route::controller(AgentController::class)->group(function() {
+    Route::get('/list-clients', 'list_clients') -> name('list_clients');
+
 });

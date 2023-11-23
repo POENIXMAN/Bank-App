@@ -10,11 +10,9 @@
                         <div class="alert alert-success">
                             {{ $message }}
                         </div>
-                    @else
-                        <div class="alert alert-success">
-                            @if (session('user'))
-                                Welcome, {{ session('user')['name'] }}! You are now logged in
-                            @endif
+                    @elseif ($message = Session::get('error'))
+                        <div class="alert alert-danger">
+                            {{ $message }}
                         </div>
                     @endif
                 </div>
@@ -23,5 +21,4 @@
     </div>
 
     @include('actions')
-
 @endsection

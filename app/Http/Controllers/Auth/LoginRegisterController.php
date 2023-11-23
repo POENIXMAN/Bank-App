@@ -117,7 +117,7 @@ class LoginRegisterController extends BaseController
             ]);
 
             $request->session()->regenerate();
-            return redirect()->route('dashboard')
+            return redirect()->route('agent-dashboard')
                 ->withSuccess('You have successfully logged in as a bank agent!');
         }
 
@@ -143,6 +143,17 @@ class LoginRegisterController extends BaseController
             ])->onlyInput('email');
     }
 
+    public function agent_dashboard(){
+        if (Auth::guard('agent')->check()) {
+            return view('auth.agent_dashboard');
+        }
+
+        return redirect()->route('login')
+            ->withErrors([
+                'email' => 'Please login to access the dashboard.',
+            ])->onlyInput('email');
+    }
+
     /*
      * Log out the user from application.
      */
@@ -150,7 +161,12 @@ class LoginRegisterController extends BaseController
     {
         Auth::logout();
         $request->session()->invalidate();
-        $request->session()->forget('user');
+        if(session('user')){
+            $request->session()->forget('user');
+        }
+        else if(session('agent')){
+            $request->session()->forget('agent');
+        }
         $request->session()->regenerateToken();
         return redirect()->route('login')
             ->withSuccess('You have logged out successfully!');;
