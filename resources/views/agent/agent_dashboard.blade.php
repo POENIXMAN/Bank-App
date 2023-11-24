@@ -22,15 +22,15 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                            aria-expanded="false">
                             {{ session('agent')['name'] }}
                         </a>
                         <ul class="dropdown-menu">
                             <li>
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                     onclick="event.preventDefault();
-                                    document.getElementById('logout-form').submit();"
-                                >
+                                    document.getElementById('logout-form').submit();">
                                     Logout
                                 </a>
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST">
@@ -46,23 +46,25 @@
     </nav>
 
     <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-body">
-                        @if ($message = Session::get('success'))
-                            <div class="alert alert-success">
-                                {{ $message }}
-                            </div>
-                        @elseif ($message = Session::get('error'))
-                            <div class="alert alert-danger">
-                                {{ $message }}
-                            </div>
-                        @endif
+        @if (Session::has('success') || Session::has('error'))
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            @if ($message = Session::get('success'))
+                                <div class="alert alert-success">
+                                    {{ $message }}
+                                </div>
+                            @elseif ($message = Session::get('error'))
+                                <div class="alert alert-danger">
+                                    {{ $message }}
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
 
         <!-- Navigation Links -->
         <div class="list-group mt-3">

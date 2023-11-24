@@ -10,6 +10,8 @@
 </head>
 
 <body>
+    @include('auth.layouts')
+    
     <div class="container mt-5">
         <h1 class="text-center">Transfer Funds</h1>
 

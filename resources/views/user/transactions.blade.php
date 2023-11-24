@@ -13,6 +13,7 @@
 </head>
 
 <body>
+    @include('auth.layouts')
 
     <div class="container mt-4">
         <h1 class="mb-4">Previous Transactions</h1>
@@ -85,30 +86,36 @@
         function applyFilters() {
             var fromAccount = $('#fromAccount').val();
             var toAccount = $('#toAccount').val();
-            var currency = $('#currency').val().toUpperCase();
+            var currency = $('#currency').val();
 
-            // Implement your logic to filter the transactions here
-            // You can use JavaScript to hide/show rows based on the filter criteria
-            // For simplicity, let's assume transactionsTable is the ID of your table
-            var rows = $('#transactionsTable tbody tr');
+            // Loop through each row in the table
+            $('#transactionsTable tbody tr').each(function() {
+                var showRow = true;
 
-            rows.show(); // Show all rows
+                // Check the From Account filter
+                if (fromAccount && $(this).find('td:nth-child(1)').text().indexOf(fromAccount) === -1) {
+                    showRow = false;
+                }
 
-            if (fromAccount !== '') {
-                rows.filter(':not([data-from="' + fromAccount + '"])').hide();
-            }
+                // Check the To Account filter
+                if (toAccount && $(this).find('td:nth-child(2)').text().indexOf(toAccount) === -1) {
+                    showRow = false;
+                }
 
-            if (toAccount !== '') {
-                rows.filter(':not([data-to="' + toAccount + '"])').hide();
-            }
+                // Check the Currency filter
+                if (currency && $(this).find('td:nth-child(4)').text() !== currency) {
+                    showRow = false;
+                }
 
-            if (currency !== '' && currency !== 'ALL') {
-                rows.filter(':not([data-currency="' + currency + '"])').hide();
-            }
+                // Show or hide the row based on filter conditions
+                if (showRow) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
         }
     </script>
-
-
 
 </body>
 

@@ -145,7 +145,7 @@ class LoginRegisterController extends BaseController
 
     public function agent_dashboard(){
         if (Auth::guard('agent')->check()) {
-            return view('auth.agent_dashboard');
+            return view('agent.agent_dashboard');
         }
 
         return redirect()->route('login')

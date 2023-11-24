@@ -61,7 +61,7 @@ class UserController extends BaseController
     public function main_menu()
     {
         if ($this->isLoggedin()) {
-            return view('main_menu');
+            return view('user.main_menu');
         } else {
             return redirect()->route('login')
                 ->withErrors([
@@ -74,7 +74,7 @@ class UserController extends BaseController
     public function create_acc_view()
     {
         if ($this->isLoggedin()) {
-            return view('form_create_account');
+            return view('user.form_create_account');
         } else {
             return redirect()->route('login')
                 ->withErrors([
@@ -137,7 +137,7 @@ class UserController extends BaseController
         if ($this->isLoggedin()) {
             $clientId = session('user')['id'];
             $accounts = Account::where('clientId', $clientId)->get(['accountNum', 'clientName', 'amount', 'currency', 'status'])->toArray();
-            return view('accounts_list', ['accounts' => $accounts]);
+            return view('user.accounts_list', ['accounts' => $accounts]);
         } else {
             return redirect()->route('login')
                 ->withErrors([
@@ -150,7 +150,7 @@ class UserController extends BaseController
     {
         if ($this->isLoggedin()) {
             $accountNum = $request->input('accountNum');
-            return view('transfer', ['accountNumFrom' => $accountNum]);
+            return view('user.transfer', ['accountNumFrom' => $accountNum]);
         } else {
             return redirect()->route('login')
                 ->withErrors([
@@ -300,7 +300,7 @@ class UserController extends BaseController
                 ])
                 ->get()
                 ->toArray();
-            return view('transactions', ['transactions' => $transactions]);
+            return view('user.transactions', ['transactions' => $transactions]);
         } else {
             return redirect()->route('login')
                 ->withErrors([

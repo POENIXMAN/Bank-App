@@ -10,6 +10,8 @@
 </head>
 
 <body>
+    @include('auth.layouts')
+    
     <div class="container">
         <h1 class="text-center mt-4">Create Account</h1>
 
