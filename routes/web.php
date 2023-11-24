@@ -32,18 +32,23 @@ Route::controller(LoginRegisterController::class)->group(function() {
 Route::controller(UserController::class)->group(function() {
     Route::get('/main-menu', 'main_menu')->name('main-menu');
 
-    Route::get('/create-acc-view', 'create_acc_view')->name('create_acc_view');
+    Route::get('/create-acc-view', 'create_acc_view')->name('create-acc-view');
     Route::post('/submit-form-create','createAccount')->name('createAccount');
 
-    Route::get('/transactions', 'view_transactions')->name('view_transactions');
+    Route::get('/transactions', 'view_transactions')->name('view-transactions');
     
     Route::get('/display-acc', 'getAccounts')->name('getAccounts');
 
-    Route::get('/tranfer', 'transfer')-> name('transfer');
+    Route::get('/tranfer', 'transfer')->name('transfer');
     Route::post('/submit-transfer', 'transferCredit')->name('transferCredit');
 });
 
 Route::controller(AgentController::class)->group(function() {
-    Route::get('/list-clients', 'list_clients') -> name('list_clients');
+    Route::get('/agent-dashboard','agent_dashboard')->name('agent-dashboard');
+    
+    Route::get('/list-clients', 'list_clients')->name('list-clients');
 
+    Route::get('/approve-accounts', 'approve_accounts')->name('approve-accounts');
+    Route::post('/approve-account', 'approveAccount')->name('approve-account');
+    Route::post('/reject-account', 'rejectAccount')->name('reject-account');
 });
