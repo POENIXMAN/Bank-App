@@ -51,7 +51,7 @@ class UserController extends BaseController
 
     private function isLoggedin()
     {
-        if (session()->has('user')) {
+        if (auth()->check() && session()->has('user')) {
             return true;
         } else {
             return false;
@@ -66,9 +66,10 @@ class UserController extends BaseController
             return redirect()->route('login')
                 ->withErrors([
                     'email' => 'Please login to access the service',
-                ])->onlyInput('email');
+                ])->withInput(['email']);
         }
     }
+
 
     public function create_acc_view()
     {
@@ -86,6 +87,7 @@ class UserController extends BaseController
     {
         if ($this->isLoggedin()) {
 
+            //Validate the inputs
             $validator = Validator::make($request->all(), [
                 'accountNum' => [
                     'required',
@@ -109,25 +111,17 @@ class UserController extends BaseController
                 return back()->withErrors($validator)->withInput();
             }
 
-
+            //create the account
             $newAccountData = [
                 'accountNum' => $request->input('accountNum'),
                 'clientName' => $request->input('name'),
                 'amount' => $request->input('amount'),
+                'status' => 'pending',
                 'currency' => $request->input('currency'),
                 'clientId' => $request->input('clientId'),
             ];
-            $account = Account::createAccount($newAccountData);
+            Account::createAccount($newAccountData);
 
-            // Retrieve the account ID directly
-            $accountId = $account->id;
-
-            DB::table('account_creation_requests')->insert([
-                'clientId' => $request->input('clientId'),
-                'accountId' => $accountId,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
             return redirect('/main-menu')
                 ->withSuccess('Account created successfully!');
         } else {
@@ -142,7 +136,7 @@ class UserController extends BaseController
     {
         if ($this->isLoggedin()) {
             $clientId = session('user')['id'];
-            $accounts = Account::where('clientId', $clientId)->get(['accountNum', 'clientName', 'amount', 'currency'])->toArray();
+            $accounts = Account::where('clientId', $clientId)->get(['accountNum', 'clientName', 'amount', 'currency', 'status'])->toArray();
             return view('accounts_list', ['accounts' => $accounts]);
         } else {
             return redirect()->route('login')
@@ -175,7 +169,7 @@ class UserController extends BaseController
                 ])->onlyInput('email');
         }
 
-        // Check if the user has an account with the specified accountNumFrom
+        //make sure the user is not sending to the same account
         $clientId = session('user')['id'];
         $accountNumFrom = $request->input('fromAccount');
 
@@ -185,16 +179,27 @@ class UserController extends BaseController
             ]);
         }
 
-        $account = Account::where('accountNum', $accountNumFrom)->first(['clientId']);
+        // Check if the user has an account with the specified accountNumFrom
+        $account = Account::where('accountNum', $accountNumFrom)->first(['id', 'status','clientId']);
 
-        if ($account && $clientId == $account['clientId']) {
-            return $this->processTransfer($request, $accountNumFrom);
-        } else {
+        if (!$account || !($clientId == $account['clientId'])) {
             // AccountNumFrom does not exist or does not belong to the user
             return back()->withErrors([
                 'fromAccount' => 'The selected account does not exist or does not belong to you.',
             ]);
         }
+
+        if ($account['status'] == 'pending') {
+            return back()->withErrors([
+                'fromAccount' => 'Your account is still pending approval.',
+            ]);
+        } elseif ($account['status'] == 'rejected') {
+            return back()->withErrors([
+                'fromAccount' => 'Your account has been rejected.',
+            ]);
+        }
+
+        return $this->processTransfer($request, $accountNumFrom);
     }
 
 
@@ -204,8 +209,19 @@ class UserController extends BaseController
         $accountFrom = Account::where('accountNum', $accountNumFrom)->first(['id', 'currency', 'amount'])->toArray();
 
         // Check if the accountNumTo exists
-        $toAccount = Account::where('accountNum', $accountNumTo)->first(['id', 'currency'])->toArray();
+        $toAccount = Account::where('accountNum', $accountNumTo)->first(['id', 'status', 'currency'])->toArray();
         if ($toAccount['id']) {
+            //check account to status
+            if ($toAccount['status'] == 'pending') {
+                return back()->withErrors([
+                    'toAccount' => 'The account you are trying to send money to is still pending approval.',
+                ]);
+            } elseif ($toAccount['status'] == 'rejected') {
+                return back()->withErrors([
+                    'toAccount' => 'The account you are trying to send money to has been rejected.',
+                ]);
+            }
+
             $currency = $request->input('currency');
             $amount = $request->input('amount');
             $accountCurrency = $accountFrom['currency'];

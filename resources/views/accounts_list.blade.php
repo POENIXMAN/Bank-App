@@ -21,6 +21,7 @@
                         <th>Client</th>
                         <th>Amount</th>
                         <th>Currency</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -31,6 +32,7 @@
                             <td>{{ $account['clientName'] }}</td>
                             <td>{{ $account['amount'] }}</td>
                             <td>{{ $account['currency'] }}</td>
+                            <td>{{ $account['status'] }}</td>
                             <td>
                                 <form action="{{ route('transfer') }}" method="get">
                                     @csrf

@@ -11,9 +11,10 @@ class Account extends Model
     public $clientName;
     public $amount;
     public $currency;
+    public $status;
     public $clientId;
     public $timestamps = true;
-    protected $fillable = ['accountNum', 'clientName', 'amount', 'currency', 'clientId'];
+    protected $fillable = ['accountNum', 'clientName', 'amount', 'status', 'currency', 'clientId'];
 
     public static function createAccount(array $data)
     {
@@ -21,13 +22,10 @@ class Account extends Model
             'accountNum' => $data['accountNum'],
             'clientName' => $data['clientName'],
             'amount' => $data['amount'],
+            'status' => $data['status'],
             'currency' => $data['currency'],
             'clientId' => $data['clientId'],
         ]);
     }
 
-    public function addCredit($addedAmount)
-    {
-        $this->amount += $addedAmount;
-    }
 }
