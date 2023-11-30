@@ -31,6 +31,9 @@
                                     <th>Client Name</th>
                                     <th>Amount</th>
                                     <th>Currency</th>
+                                    <th>Status</th>
+                                    <th>Enabled</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -40,6 +43,17 @@
                                         <td>{{ $account['clientName'] }}</td>
                                         <td>{{ $account['amount'] }}</td>
                                         <td>{{ $account['currency'] }}</td>
+                                        <td>{{ $account['status'] }}</td>
+                                        <td>{{ $account['is_enabled'] ? "Enabled" : "Disabled" }}</td>
+                                        <td>
+                                            <form action="{{ $account['is_enabled'] ? route('disable-account') : route('enable-account') }}" method="post">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{ $account['id'] }}">
+                                                <button type="submit" class="btn {{ $account['is_enabled'] ? 'btn-danger' : 'btn-success' }}">
+                                                    {{ $account['is_enabled'] ? 'Disable' : 'Enable' }}
+                                                </button>
+                                            </form>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -55,10 +69,15 @@
         <a href="{{ route('agent-dashboard') }}" class="btn btn-primary">Return to Dashboard</a>
     </div>
 
-    <!-- Bootstrap JS (optional, if you need it) -->
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    
+
+
+
 </body>
 
 </html>

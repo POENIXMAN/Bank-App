@@ -51,4 +51,11 @@ Route::controller(AgentController::class)->group(function() {
     Route::get('/approve-accounts', 'approve_accounts')->name('approve-accounts');
     Route::post('/approve-account', 'approveAccount')->name('approve-account');
     Route::post('/reject-account', 'rejectAccount')->name('reject-account');
+
+    Route::post('/enable-account', 'enable_account')->name('enable-account');
+    Route::post('/disable-account', 'disable_account')->name('disable-account');
+
+    Route::get('/view-physical-transactions', 'view_physical_transactions')->name('view-physical-transactions');
+    Route::post('/physical-transactions', 'physical_transactions')->name('physical-transactions');
+    
 });
