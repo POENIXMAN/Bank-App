@@ -11,7 +11,6 @@ use Illuminate\Routing\Controller as BaseController;
 
 class UserController extends BaseController
 {
-
     public function convertCurrency($amount, $fromCurrency, $toCurrency)
     {
         // Define exchange rates
