@@ -38,8 +38,9 @@
         <div class="list-group mt-3">
             <a href="/approve-accounts" class="list-group-item list-group-item-action">Review Account Creation Requests</a>
             <a href="/list-clients" class="list-group-item list-group-item-action">Check Listing of Clients</a>
-            {{-- <a href="#" class="list-group-item list-group-item-action">Disable/Enable Client Access</a> --}}
             <a href="/view-physical-transactions" class="list-group-item list-group-item-action">Execute Deposit/Withdrawal Transactions</a>
+            <a href="/client-transactions" class="list-group-item list-group-item-action">View all Client Transactions</a>
+            <a href="/agent-tranfer" class="list-group-item list-group-item-action">Transfer Credit between Accounts</a>
         </div>
 
     </div>

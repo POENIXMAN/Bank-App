@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\Account;
-use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Account;
+use App\Models\Transactions;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Routing\Controller as BaseController;
 
 
@@ -286,6 +288,155 @@ class AgentController extends BaseController
         } else {
             return redirect()->route('login')
                 ->with('error', 'You must be logged in to view this page.');
+        }
+    }
+
+    public function view_client_transactions()
+    {
+        if ($this->isLoggedin()) {
+            // get all transactions
+            $transactions = Transactions::select([
+                'from_account_id',
+                'to_account_id',
+                'amount',
+                'currency',
+                DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d at %H:%i:%s') as formatted_created_at"),
+            ])
+                ->get()
+                ->toArray();
+
+            return view('agent.all_client_transactions', ['transactions' => $transactions]);
+        } else {
+            return redirect()->route('login')
+                ->with('error', 'You must be logged in to view this page.');
+        }
+    }
+
+    public function view_transfer_form()
+    {
+        if ($this->isLoggedin()) {
+            return view('agent.transfer_form');
+        } else {
+            return redirect()->route('login')
+                ->with('error', 'You must be logged in to view this page.');
+        }
+    }
+
+    public function submit_transfer(Request $request)
+    {
+        if ($this->isLoggedin()) {
+            $accountNumFrom = $request->input('fromAccount');
+            $account = Account::where('accountNum', $accountNumFrom)->first(['id', 'status', 'clientId', 'is_enabled']);
+
+            if (!$account) {
+                return back()->withErrors([
+                    'fromAccount' => 'The account number does not exist',
+                ]);
+            }
+
+            if (!$account['is_enabled']) {
+                return back()->withErrors([
+                    'fromAccount' => 'This account is Disabled.',
+                ]);
+            } else if ($account['status'] == 'pending') {
+                return back()->withErrors([
+                    'fromAccount' => 'This account is still pending approval.',
+                ]);
+            } elseif ($account['status'] == 'rejected') {
+                return back()->withErrors([
+                    'fromAccount' => 'This account has been rejected.',
+                ]);
+            }
+
+            return $this->agent_processTransfer($request, $accountNumFrom);
+        } else {
+            return redirect()->route('login')
+                ->with('error', 'You must be logged in to view this page.');
+        }
+    }
+
+    private function agent_processTransfer(Request $request, $accountNumFrom)
+    {
+        $accountNumTo = $request->input('toAccount');
+        $accountFrom = Account::where('accountNum', $accountNumFrom)->first(['id', 'currency', 'amount'])->toArray();
+
+        // Check if the accountNumTo exists
+        $toAccount = Account::where('accountNum', $accountNumTo)->first(['id', 'status', 'currency', 'is_enabled'])->toArray();
+        if ($toAccount['id']) {
+            //check account to status
+            if (!$toAccount['is_enabled']) {
+                return back()->withErrors([
+                    'toAccount' => 'The account you are trying to send money to is Disabled.',
+                ]);
+            } else if ($toAccount['status'] == 'pending') {
+                return back()->withErrors([
+                    'toAccount' => 'The account you are trying to send money to is still pending approval.',
+                ]);
+            } elseif ($toAccount['status'] == 'rejected') {
+                return back()->withErrors([
+                    'toAccount' => 'The account you are trying to send money to has been rejected.',
+                ]);
+            }
+
+            $currency = $request->input('currency');
+            $amount = $request->input('amount');
+            $accountCurrency = $accountFrom['currency'];
+
+            // Convert currency if necessary
+            if ($currency != $accountCurrency) {
+                $amountConverted = $this->convertCurrency($amount, $currency, $accountCurrency);
+            } else {
+                $amountConverted = $amount;
+            }
+
+            $accountToCurrency = $toAccount['currency'];
+            if ($currency != $accountToCurrency) {
+                $amountToSend = $this->convertCurrency($amountConverted, $accountCurrency, $accountToCurrency);
+            } else {
+                $amountToSend = $amountConverted;
+            }
+
+            // Check if there are sufficient funds
+            if ($amountConverted <= $accountFrom['amount']) {
+                // Start a database transaction
+                DB::beginTransaction();
+
+                try {
+                    // Deduct amountConverted from accountFrom
+                    Account::where('accountNum', $accountNumFrom)->decrement('amount', $amountConverted);
+                    // Add amount to accountTo
+                    Account::where('accountNum', $accountNumTo)->increment('amount', $amountToSend);
+
+
+                    $transactionData = [
+                        'from_account_id' => $accountFrom['id'],
+                        'to_account_id' => $toAccount['id'],
+                        'amount' => $amount,
+                        'currency' => $currency,
+                    ];
+
+                    Transactions::createTransaction($transactionData);
+                    // Commit the transaction
+                    DB::commit();
+
+                    return redirect()->back()->withSuccess('Transfer successful!');
+                } catch (\Exception $e) {
+                    // An error occurred, rollback the transaction
+                    DB::rollBack();
+
+                    return back()->withErrors([
+                        'general' => 'An error occurred during the transfer. Please try again.',
+                    ]);
+                }
+            } else {
+                return back()->withErrors([
+                    'amount' => 'Insufficient funds in the account.',
+                ])->onlyInput('amount');
+            }
+        } else {
+            return back()->withErrors([
+                'toAccount' => 'The account number does not exist',
+            ])->onlyInput('toAccount');
         }
     }
 }

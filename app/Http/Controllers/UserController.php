@@ -162,6 +162,7 @@ class UserController extends BaseController
     {
         // Check if the user is logged in
         if (!$this->isLoggedin()) {
+            dd("reached");
             return redirect()->route('login')
                 ->withErrors([
                     'email' => 'Please login to access the service',
@@ -179,7 +180,7 @@ class UserController extends BaseController
         }
 
         // Check if the user has an account with the specified accountNumFrom
-        $account = Account::where('accountNum', $accountNumFrom)->first(['id', 'status','clientId','is_enabled']);
+        $account = Account::where('accountNum', $accountNumFrom)->first(['id', 'status', 'clientId', 'is_enabled']);
 
         if (!$account || !($clientId == $account['clientId'])) {
             // AccountNumFrom does not exist or does not belong to the user
@@ -188,12 +189,11 @@ class UserController extends BaseController
             ]);
         }
 
-        if(!$account['is_enabled']){
+        if (!$account['is_enabled']) {
             return back()->withErrors([
                 'fromAccount' => 'This account is Disabled.',
             ]);
-        } 
-        else if ($account['status'] == 'pending') {
+        } else if ($account['status'] == 'pending') {
             return back()->withErrors([
                 'fromAccount' => 'This account is still pending approval.',
             ]);
@@ -216,12 +216,11 @@ class UserController extends BaseController
         $toAccount = Account::where('accountNum', $accountNumTo)->first(['id', 'status', 'currency', 'is_enabled'])->toArray();
         if ($toAccount['id']) {
             //check account to status
-            if(!$toAccount['is_enabled']){
+            if (!$toAccount['is_enabled']) {
                 return back()->withErrors([
                     'toAccount' => 'The account you are trying to send money to is Disabled.',
                 ]);
-            } 
-            else if ($toAccount['status'] == 'pending') {
+            } else if ($toAccount['status'] == 'pending') {
                 return back()->withErrors([
                     'toAccount' => 'The account you are trying to send money to is still pending approval.',
                 ]);

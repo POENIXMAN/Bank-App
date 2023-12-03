@@ -57,5 +57,9 @@ Route::controller(AgentController::class)->group(function() {
 
     Route::get('/view-physical-transactions', 'view_physical_transactions')->name('view-physical-transactions');
     Route::post('/physical-transactions', 'physical_transactions')->name('physical-transactions');
-    
+
+    Route::get('/client-transactions', 'view_client_transactions')->name('client-transactions');
+
+    Route::get('/agent-tranfer', 'view_transfer_form')->name('agent-tranfer');
+    Route::post('/agent-submit-transfer', 'submit_transfer')->name('agent-submit-transfer');
 });
