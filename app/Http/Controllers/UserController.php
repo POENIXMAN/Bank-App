@@ -226,7 +226,7 @@ class UserController extends BaseController
                 ]);
             } elseif ($toAccount['status'] == 'disapproved') {
                 return back()->withErrors([
-                    'toAccount' => 'The account you are trying to send money to has been rejected.',
+                    'toAccount' => 'The account you are trying to send money to has been disapproved.',
                 ]);
             }
 
