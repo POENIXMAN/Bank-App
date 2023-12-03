@@ -36,7 +36,7 @@ class LoginRegisterController extends BaseController
     {
         $request->validate([
             'name' => 'required|string|max:250',
-            'email' => 'required|email|max:250|unique:users',
+            'email' => 'required|email|max:250|unique:users|unique:agents',
             'password' => 'required|min:8|confirmed'
         ]);
 

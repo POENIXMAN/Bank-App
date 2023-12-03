@@ -162,7 +162,7 @@ class AgentController extends BaseController
             // Save the updated array back to the database
             Account::where('id', $id)->update($account);
 
-            return redirect()->back()->with('success', 'Account rejected successfully.');
+            return redirect()->back()->with('success', 'Account disapproved successfully.');
         } else {
             return redirect()->route('login')
                 ->with('error', 'You must be logged in to view this page.');
@@ -256,9 +256,9 @@ class AgentController extends BaseController
                 return back()->withErrors([
                     'accountNumber' => 'This account is still pending approval.',
                 ]);
-            } elseif ($transactions['status'] == 'rejected') {
+            } elseif ($transactions['status'] == 'disapproved') {
                 return back()->withErrors([
-                    'accountNumber' => 'This account has been rejected.',
+                    'accountNumber' => 'This account has been disapproved.',
                 ]);
             }
 
@@ -342,9 +342,9 @@ class AgentController extends BaseController
                 return back()->withErrors([
                     'fromAccount' => 'This account is still pending approval.',
                 ]);
-            } elseif ($account['status'] == 'rejected') {
+            } elseif ($account['status'] == 'disapproved') {
                 return back()->withErrors([
-                    'fromAccount' => 'This account has been rejected.',
+                    'fromAccount' => 'This account has been disapproved.',
                 ]);
             }
 
@@ -372,9 +372,9 @@ class AgentController extends BaseController
                 return back()->withErrors([
                     'toAccount' => 'The account you are trying to send money to is still pending approval.',
                 ]);
-            } elseif ($toAccount['status'] == 'rejected') {
+            } elseif ($toAccount['status'] == 'disapproved') {
                 return back()->withErrors([
-                    'toAccount' => 'The account you are trying to send money to has been rejected.',
+                    'toAccount' => 'The account you are trying to send money to has been disapproved.',
                 ]);
             }
 

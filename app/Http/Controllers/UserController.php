@@ -122,7 +122,7 @@ class UserController extends BaseController
             Account::createAccount($newAccountData);
 
             return redirect('/main-menu')
-                ->withSuccess('Account created successfully!');
+                ->withSuccess('Account creation request is now pending acceptance');
         } else {
             return redirect()->route('login')
                 ->withErrors([
@@ -197,9 +197,9 @@ class UserController extends BaseController
             return back()->withErrors([
                 'fromAccount' => 'This account is still pending approval.',
             ]);
-        } elseif ($account['status'] == 'rejected') {
+        } elseif ($account['status'] == 'disapproved') {
             return back()->withErrors([
-                'fromAccount' => 'This account has been rejected.',
+                'fromAccount' => 'This account has been disapproved.',
             ]);
         }
 
@@ -224,7 +224,7 @@ class UserController extends BaseController
                 return back()->withErrors([
                     'toAccount' => 'The account you are trying to send money to is still pending approval.',
                 ]);
-            } elseif ($toAccount['status'] == 'rejected') {
+            } elseif ($toAccount['status'] == 'disapproved') {
                 return back()->withErrors([
                     'toAccount' => 'The account you are trying to send money to has been rejected.',
                 ]);

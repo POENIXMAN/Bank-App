@@ -12,7 +12,7 @@
 
 <body>
 
-    @include('agent.navbar');
+    @include('agent.navbar')
     <div class="container mt-5">
         @if (Session::has('success') || Session::has('error'))
             <div class="row justify-content-center">

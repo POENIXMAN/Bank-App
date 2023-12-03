@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    @include('agent.navbar');
+    @include('agent.navbar')
 
     <div class="container mt-5">
         <h2>Physical Transactions</h2>

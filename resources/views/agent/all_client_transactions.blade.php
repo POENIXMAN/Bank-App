@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    @include('agent.navbar');
+    @include('agent.navbar')
 
     <div class="container mt-4">
         <h1 class="mb-4">All Previous Transactions</h1>

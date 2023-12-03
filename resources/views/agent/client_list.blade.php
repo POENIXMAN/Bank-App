@@ -11,7 +11,7 @@
 
 <body>
 
-    @include('agent.navbar');
+    @include('agent.navbar')
 
     <div class="container mt-4">
         @foreach ($usersWithAccounts as $item)
