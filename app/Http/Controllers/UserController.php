@@ -63,9 +63,7 @@ class UserController extends BaseController
             return view('user.main_menu');
         } else {
             return redirect()->route('login')
-                ->withErrors([
-                    'email' => 'Please login to access the service',
-                ])->withInput(['email']);
+                ->with('error', 'You must be logged in as a user to access this service.');
         }
     }
 
@@ -76,9 +74,7 @@ class UserController extends BaseController
             return view('user.form_create_account');
         } else {
             return redirect()->route('login')
-                ->withErrors([
-                    'email' => 'Please login to access the service',
-                ])->onlyInput('email');
+                ->with('error', 'You must be logged in as a user to access this service.');
         }
     }
 
@@ -94,17 +90,18 @@ class UserController extends BaseController
                         // Check if an account with the same number already exists
                         $userAccounts = Account::where('accountNum', $value)->exists();
                         if ($userAccounts) {
-                            $fail("An account with the same account Number ($value) already exists.");
+                            $fail("An account with the same account Number $value already exists.");
                         }
                     },
                 ],
                 'name' => 'required',
-                'amount' => 'required|numeric|min:0|max:99999999999999999999', // Ensure the amount has 20 digits or fewer
+                'amount' => 'required|integer|min:0|max:9223372036854775807', // Maximum value for bigint(20)
                 'currency' => 'required',
                 'clientId' => 'required',
             ], [
-                'amount.max' => 'The amount should be 20 digits or less.',
+                'amount.max' => 'The amount should be within the valid range between 0 and 9223372036854775807.',
             ]);
+            
 
             if ($validator->fails()) {
                 return back()->withErrors($validator)->withInput();
@@ -125,9 +122,7 @@ class UserController extends BaseController
                 ->withSuccess('Account creation request is now pending acceptance');
         } else {
             return redirect()->route('login')
-                ->withErrors([
-                    'email' => 'Please login to access the service',
-                ])->onlyInput('email');
+                ->with('error', 'You must be logged in as a user to access this service.');
         }
     }
 
@@ -139,9 +134,7 @@ class UserController extends BaseController
             return view('user.accounts_list', ['accounts' => $accounts]);
         } else {
             return redirect()->route('login')
-                ->withErrors([
-                    'email' => 'Please login to access the service',
-                ])->onlyInput('email');
+                ->with('error', 'You must be logged in as a user to access this service.');
         }
     }
 
@@ -152,9 +145,7 @@ class UserController extends BaseController
             return view('user.transfer', ['accountNumFrom' => $accountNum]);
         } else {
             return redirect()->route('login')
-                ->withErrors([
-                    'email' => 'Please login to access the service',
-                ])->onlyInput('email');
+                ->with('error', 'You must be logged in as a user to access this service.');
         }
     }
 
@@ -162,11 +153,8 @@ class UserController extends BaseController
     {
         // Check if the user is logged in
         if (!$this->isLoggedin()) {
-            dd("reached");
             return redirect()->route('login')
-                ->withErrors([
-                    'email' => 'Please login to access the service',
-                ])->onlyInput('email');
+                ->with('error', 'You must be logged in as a user to access this service.');
         }
 
         //make sure the user is not sending to the same account
@@ -311,9 +299,7 @@ class UserController extends BaseController
             return view('user.transactions', ['transactions' => $transactions]);
         } else {
             return redirect()->route('login')
-                ->withErrors([
-                    'email' => 'Please login to access the service',
-                ])->onlyInput('email');
+                ->with('error', 'You must be logged in as a user to access this service.');
         }
     }
 }

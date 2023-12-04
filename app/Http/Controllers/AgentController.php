@@ -66,7 +66,7 @@ class AgentController extends BaseController
             return view('agent.agent_dashboard');
         } else {
             return redirect()->route('login')
-                ->with('error', 'You must be logged in to view this page.');
+                ->with('error', 'You must be logged in as an agent to access this service.');
         }
     }
     public function list_clients()
@@ -86,7 +86,7 @@ class AgentController extends BaseController
             return view('agent.client_list', ['usersWithAccounts' => $usersWithAccounts]);
         } else {
             return redirect()->route('login')
-                ->with('error', 'You must be logged in to view this page.');
+                ->with('error', 'You must be logged in as an agent to access this service.');
         }
     }
 
@@ -105,7 +105,7 @@ class AgentController extends BaseController
             return view('agent.approve_accounts', ['accounts' => $accounts]);
         } else {
             return redirect()->route('login')
-                ->with('error', 'You must be logged in to view this page.');
+                ->with('error', 'You must be logged in as an agent to access this service.');
         }
     }
 
@@ -136,7 +136,7 @@ class AgentController extends BaseController
             return redirect()->back()->with('success', 'Account approved successfully.');
         } else {
             return redirect()->route('login')
-                ->with('error', 'You must be logged in to view this page.');
+                ->with('error', 'You must be logged in as an agent to access this service.');
         }
     }
 
@@ -165,7 +165,7 @@ class AgentController extends BaseController
             return redirect()->back()->with('success', 'Account disapproved successfully.');
         } else {
             return redirect()->route('login')
-                ->with('error', 'You must be logged in to view this page.');
+                ->with('error', 'You must be logged in as an agent to access this service.');
         }
     }
 
@@ -194,7 +194,7 @@ class AgentController extends BaseController
             return redirect()->back()->with('success', 'Account enabled successfully.');
         } else {
             return redirect()->route('login')
-                ->with('error', 'You must be logged in to view this page.');
+                ->with('error', 'You must be logged in as an agent to access this service.');
         }
     }
 
@@ -223,7 +223,7 @@ class AgentController extends BaseController
             return redirect()->back()->with('success', 'Account Disabled successfully.');
         } else {
             return redirect()->route('login')
-                ->with('error', 'You must be logged in to view this page.');
+                ->with('error', 'You must be logged in as an agent to access this service.');
         }
     }
 
@@ -233,7 +233,7 @@ class AgentController extends BaseController
             return view('agent.view_physical_transactions');
         } else {
             return redirect()->route('login')
-                ->with('error', 'You must be logged in to view this page.');
+                ->with('error', 'You must be logged in as an agent to access this service.');
         }
     }
 
@@ -287,7 +287,7 @@ class AgentController extends BaseController
             return redirect()->back()->with('success', 'Transaction completed successfully.');
         } else {
             return redirect()->route('login')
-                ->with('error', 'You must be logged in to view this page.');
+                ->with('error', 'You must be logged in as an agent to access this service.');
         }
     }
 
@@ -308,7 +308,7 @@ class AgentController extends BaseController
             return view('agent.all_client_transactions', ['transactions' => $transactions]);
         } else {
             return redirect()->route('login')
-                ->with('error', 'You must be logged in to view this page.');
+                ->with('error', 'You must be logged in as an agent to access this service.');
         }
     }
 
@@ -318,7 +318,7 @@ class AgentController extends BaseController
             return view('agent.transfer_form');
         } else {
             return redirect()->route('login')
-                ->with('error', 'You must be logged in to view this page.');
+                ->with('error', 'You must be logged in as an agent to access this service.');
         }
     }
 
@@ -351,7 +351,7 @@ class AgentController extends BaseController
             return $this->agent_processTransfer($request, $accountNumFrom);
         } else {
             return redirect()->route('login')
-                ->with('error', 'You must be logged in to view this page.');
+                ->with('error', 'You must be logged in as an agent to access this service.');
         }
     }
 

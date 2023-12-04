@@ -3,7 +3,7 @@
 @section('content')
 
     @if (Session::get('success') || Session::get('error'))
-        <div class="row justify-content-center mt-5">
+        <div class="container row justify-content-center mt-5">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">Dashboard Message</div>

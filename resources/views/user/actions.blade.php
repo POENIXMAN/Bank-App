@@ -12,24 +12,20 @@
 
 <body>
 
-    <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">Actions</div>
-                    <div class="card-body">
-                        <div class="row mt-3">
-                            <div class="col-md-12 text-center">
-                                <a href="/create-acc-view" class="btn btn-primary">Create Account</a>
-                                <a href="/transactions" class="btn btn-primary ml-2">View Previous Transactions</a>
-                                <a href="/display-acc" class="btn btn-primary ml-2">Display Accounts</a>
-                            </div>
-                        </div>
-                    </div>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header text-center">Actions</div>
+            <div class="card-body">
+                <!-- Navigation Links -->
+                <div class="list-group">
+                    <a href="/create-acc-view" class="list-group-item list-group-item-action">Create Account</a>
+                    <a href="/transactions" class="list-group-item list-group-item-action">View Previous Transactions</a>
+                    <a href="/display-acc" class="list-group-item list-group-item-action">Display Accounts</a>
                 </div>
             </div>
         </div>
     </div>
+
 
 
 </body>
