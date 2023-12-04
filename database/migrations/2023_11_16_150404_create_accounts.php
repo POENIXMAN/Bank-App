@@ -14,7 +14,7 @@ return new class extends Migration
             $table->id();
             $table->string('accountNum')->unique();
             $table->string('clientName');
-            $table->decimal('amount', 10, 2); // A decimal amount field with 10 total digits and 2 decimal places
+            $table->bigInteger('amount');
             $table->enum('currency', ['LBP', 'USD', 'EUR']); // Enum column for currency
             $table->enum('status', ['pending', 'approved', 'disapproved'])->default('pending');
             $table->boolean('is_enabled')->default(true);
