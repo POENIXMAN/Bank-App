@@ -138,7 +138,20 @@ class UserController extends BaseController
         }
     }
 
-    public function transfer(Request $request)
+    public function transfer(){
+        if ($this->isLoggedin()) {
+            $clientId = session('user')['id'];
+            $accounts = Account::where('clientId', $clientId)->pluck('accountNum')->toArray();
+
+            return view('user.transfer', ['accounts' => $accounts, 'accountNumFrom' => null]);
+        } else {
+            return redirect()->route('login')
+                ->with('error', 'You must be logged in as a user to access this service.');
+        }
+
+    }
+    
+    public function transferFromAcc(Request $request)
     {
         if ($this->isLoggedin()) {
             $accountNum = $request->input('accountNum');
@@ -284,19 +297,31 @@ class UserController extends BaseController
     {
         if ($this->isLoggedin()) {
             $clientId = session('user')['id'];
-            $accountsId = Account::where('clientId', $clientId)->get(['id']);
-            $transactions = Transactions::whereIn('from_account_id', $accountsId)
-                ->orWhereIn('to_account_id', $accountsId)
-                ->select([
-                    'from_account_id',
-                    'to_account_id',
-                    'amount',
-                    'currency',
-                    DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d at %H:%i:%s') as formatted_created_at"),
+
+            $transactions = Transactions::select([
+                    'from_account.accountNum as from_account_num',
+                    'to_account.accountNum as to_account_num',
+                    'transactions.amount',
+                    'transactions.currency',
+                    DB::raw("DATE_FORMAT(transactions.created_at, '%Y-%m-%d at %H:%i:%s') as formatted_created_at"),
                 ])
+                ->join('accounts as from_account', 'transactions.from_account_id', '=', 'from_account.id')
+                ->join('accounts as to_account', 'transactions.to_account_id', '=', 'to_account.id')
+                ->whereIn('transactions.from_account_id', function($query) use ($clientId) {
+                    $query->select('id')
+                        ->from('accounts')
+                        ->where('clientId', $clientId);
+                })
+                ->orWhereIn('transactions.to_account_id', function($query) use ($clientId) {
+                    $query->select('id')
+                        ->from('accounts')
+                        ->where('clientId', $clientId);
+                })
                 ->get()
                 ->toArray();
+            
             return view('user.transactions', ['transactions' => $transactions]);
+            
         } else {
             return redirect()->route('login')
                 ->with('error', 'You must be logged in as a user to access this service.');

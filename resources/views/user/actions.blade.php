@@ -18,9 +18,10 @@
             <div class="card-body">
                 <!-- Navigation Links -->
                 <div class="list-group">
-                    <a href="/create-acc-view" class="list-group-item list-group-item-action">Create Account</a>
-                    <a href="/transactions" class="list-group-item list-group-item-action">View Previous Transactions</a>
-                    <a href="/display-acc" class="list-group-item list-group-item-action">Display Accounts</a>
+                    <a href="/create-acc-view" class="list-group-item list-group-item-action border">Create Account</a>
+                    <a href="/transactions" class="list-group-item list-group-item-action border">View Previous Transactions</a>
+                    <a href="/display-acc" class="list-group-item list-group-item-action border">Display Accounts</a>
+                    <a href="/transfer" class="list-group-item list-group-item-action border">Transfer Funds</a>
                 </div>
             </div>
         </div>

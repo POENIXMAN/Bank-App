@@ -56,8 +56,8 @@
                 <tbody>
                     @foreach ($transactions as $transaction)
                         <tr>
-                            <td>{{ $transaction['from_account_id'] }}</td>
-                            <td>{{ $transaction['to_account_id'] }}</td>
+                            <td>{{ $transaction['from_account_num'] }}</td>
+                            <td>{{ $transaction['to_account_num'] }}</td>
                             <td>{{ $transaction['amount'] }}</td>
                             <td>{{ $transaction['currency'] }}</td>
                             <td>{{ $transaction['formatted_created_at'] }}</td>

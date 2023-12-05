@@ -54,7 +54,7 @@
                             @endif
                         </td>
                         <td>
-                            <form action="{{ route('transfer') }}" method="get">
+                            <form action="{{ route('tranfer-from-acc') }}" method="get">
                                 @csrf
                                 <input type="hidden" name="accountNum" value="{{ $account['accountNum'] }}">
                                 @if($account['status'] == 'approved')

@@ -31,13 +31,22 @@
             <div class="form-group row">
                 <label for="fromAccount" class="col-md-3 col-form-label text-md-right">From Account:</label>
                 <div class="col-md-6">
-                    <input type="hidden" name="fromAccount" value="{{ $accountNumFrom }}">
-                    <input type="text" class="form-control" id="fromAccountDisplay" value="{{ $accountNumFrom }}" disabled>
+                    @if ($accountNumFrom)
+                        <input type="hidden" name="fromAccount" value="{{ $accountNumFrom }}">
+                        <input type="text" class="form-control" id="fromAccountDisplay" value="{{ $accountNumFrom }}" disabled>
+                    @else
+                        <select class="form-control" id="fromAccount" name="fromAccount" required>
+                            @foreach ($accounts as $account)
+                                <option value="{{ $account }}">{{ $account }}</option>
+                            @endforeach
+                        </select>
+                    @endif
                     @if ($errors->has('fromAccount'))
                         <span class="text-danger">{{ $errors->first('fromAccount') }}</span>
                     @endif
                 </div>
-            </div>            
+            </div>
+                        
 
             <div class="form-group row">
                 <label for="toAccount" class="col-md-3 col-form-label text-md-right">To Account:</label>

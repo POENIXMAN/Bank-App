@@ -296,16 +296,19 @@ class AgentController extends BaseController
         if ($this->isLoggedin()) {
             // get all transactions
             $transactions = Transactions::select([
-                'from_account_id',
-                'to_account_id',
-                'amount',
-                'currency',
-                DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d at %H:%i:%s') as formatted_created_at"),
+                'from_account.accountNum as from_account_num',
+                'to_account.accountNum as to_account_num',
+                'transactions.amount',
+                'transactions.currency',
+                DB::raw("DATE_FORMAT(transactions.created_at, '%Y-%m-%d at %H:%i:%s') as formatted_created_at"),
             ])
-                ->get()
-                ->toArray();
-
-            return view('agent.all_client_transactions', ['transactions' => $transactions]);
+            ->join('accounts as from_account', 'transactions.from_account_id', '=', 'from_account.id')
+            ->join('accounts as to_account', 'transactions.to_account_id', '=', 'to_account.id')
+            ->get()
+            ->toArray();
+        
+        return view('agent.all_client_transactions', ['transactions' => $transactions]);
+        
         } else {
             return redirect()->route('login')
                 ->with('error', 'You must be logged in as an agent to access this service.');
