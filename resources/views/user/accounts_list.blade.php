@@ -37,6 +37,7 @@
                         <th>Amount</th>
                         <th>Currency</th>
                         <th>Status</th>
+                        <th>Availability</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -49,15 +50,22 @@
                         <td>{{ $account['currency'] }}</td>
                         <td> @if ($account['status'] === 'approved')
                             <span style="color: green;">{{ $account['status'] }}</span>
-                            @else ($account['status'] === 'approved')
+                            @else
                             <span style="color: red;">{{ $account['status'] }}</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if ($account['is_enabled'] === 1)
+                            <span style="color: green;">Enabled</span>
+                            @else
+                            <span style="color: red;">Disabled</span>
                             @endif
                         </td>
                         <td>
                             <form action="{{ route('tranfer-from-acc') }}" method="get">
                                 @csrf
                                 <input type="hidden" name="accountNum" value="{{ $account['accountNum'] }}">
-                                @if($account['status'] == 'approved')
+                                @if($account['status'] == 'approved' && $account['is_enabled'] === 1)
                                 <button type="submit" class="btn btn-link">Transfer</button>
                                 @else
                                 <button type="button" class="btn btn-link" disabled>Transfer</button>
@@ -89,8 +97,7 @@
                         $('tbody tr[data-status="' + selectedStatus + '"]').show();
                     }
                 });
-            });
-        </script>
+                </script>
     </div>
 </body>
 

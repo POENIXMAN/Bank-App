@@ -130,7 +130,7 @@ class UserController extends BaseController
     {
         if ($this->isLoggedin()) {
             $clientId = session('user')['id'];
-            $accounts = Account::where('clientId', $clientId)->get(['accountNum', 'clientName', 'amount', 'currency', 'status'])->toArray();
+            $accounts = Account::where('clientId', $clientId)->get(['accountNum', 'clientName', 'amount', 'currency', 'status', 'is_enabled'])->toArray();
             return view('user.accounts_list', ['accounts' => $accounts]);
         } else {
             return redirect()->route('login')
