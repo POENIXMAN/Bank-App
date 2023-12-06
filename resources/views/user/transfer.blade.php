@@ -88,7 +88,7 @@
         
     </div>
 
-    <p class="text-center"><a href="/main-menu">Return to Main Menu</a></p>
+    <p class="text-center mt-4"><a href="/main-menu" class="btn btn-primary">Return to Main Menu</a></p>
 
 </body>
 

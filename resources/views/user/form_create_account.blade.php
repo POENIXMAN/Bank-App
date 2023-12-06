@@ -11,7 +11,7 @@
 
 <body>
     @include('auth.layouts')
-    
+
     <div class="container">
         <h1 class="text-center mt-4">Create Account</h1>
 
@@ -55,12 +55,11 @@
                 @enderror
             </div>
 
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary btn-lg">Create</button>
-            </div>
+            <button type="submit" class="btn btn-primary btn-lg">Create</button>
+
         </form>
 
-        <p class="text-center mt-4"><a href="/main-menu">Return to Main Menu</a></p>
+        <p class="text-center mt-4"><a href="/main-menu" class="btn btn-primary">Return to Main Menu</a></p>
     </div>
 </body>
 

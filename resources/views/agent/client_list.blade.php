@@ -14,6 +14,35 @@
     @include('agent.navbar')
 
     <div class="container mt-4">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="currencyFilter">Filter by Currency:</label>
+                <select id="currencyFilter" class="form-control">
+                    <option value="all">All</option>
+                    <option value="LBP">LBP</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="statusFilter">Filter by Status:</label>
+                <select id="statusFilter" class="form-control">
+                    <option value="all">All</option>
+                    <option value="approved">Approved</option>
+                    <option value="pending">Pending</option>
+                    <option value="disapproved">Disapproved</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="availabilityFilter">Filter by Availability:</label>
+                <select id="availabilityFilter" class="form-control">
+                    <option value="all">All</option>
+                    <option value="enabled">Enabled</option>
+                    <option value="disabled">Disabled</option>
+                </select>
+            </div>
+        </div>
+
         @foreach ($usersWithAccounts as $item)
             <div class="card mb-3">
                 <div class="card-header">
@@ -38,7 +67,7 @@
                             </thead>
                             <tbody>
                                 @foreach ($item['accounts'] as $account)
-                                    <tr>
+                                    <tr data-status="{{ $account['status'] }}" data-currency="{{ $account['currency'] }}" data-availability="{{ $account['is_enabled'] }}">
                                         <td>{{ $account['accountNum'] }}</td>
                                         <td>{{ $account['clientName'] }}</td>
                                         <td>{{ $account['amount'] }}</td>
@@ -62,12 +91,41 @@
                         <p>No accounts found for this user.</p>
                     @endif
                 </div>
-
             </div>
         @endforeach
 
         <a href="{{ route('agent-dashboard') }}" class="btn btn-primary">Return to Dashboard</a>
     </div>
+
+    <!-- Add jQuery and custom script for filtering -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Function to apply filters
+            function applyFilters() {
+                var selectedStatus = $('#statusFilter').val();
+                var selectedCurrency = $('#currencyFilter').val();
+                var selectedAvailability = $('#availabilityFilter').val();
+
+                // Hide all rows initially
+                $('tbody tr').hide();
+
+                // Filter and show rows based on selected filters
+                $('tbody tr').filter(function() {
+                    var statusMatch = selectedStatus === 'all' || $(this).data('status') === selectedStatus;
+                    var currencyMatch = selectedCurrency === 'all' || $(this).data('currency') === selectedCurrency;
+                    var availabilityMatch = selectedAvailability === 'all' || $(this).data('availability') == (selectedAvailability === 'enabled');
+
+                    return statusMatch && currencyMatch && availabilityMatch;
+                }).show();
+            }
+
+            // Bind applyFilters to the change event of filter dropdowns
+            $('#statusFilter, #currencyFilter, #availabilityFilter').change(function() {
+                applyFilters();
+            });
+        });
+    </script>
 
 </body>
 

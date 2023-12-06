@@ -38,7 +38,11 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <button type="button" class="btn btn-primary mt-4" onclick="applyFilters()">Apply Filters</button>
+                <label for="order">Order By:</label>
+                <select class="form-control" id="order" onchange="applyFilters()">
+                    <option value="asc">Latest</option>
+                    <option value="desc">Oldest</option>
+                </select>
             </div>
         </div>
 
@@ -69,7 +73,7 @@
             <p>No transactions available.</p>
         @endif
     </div>
-    <p class="text-center mt-4"><a href="/main-menu">Return to Main Menu</a></p>
+    <p class="text-center mt-4"><a href="/main-menu" class="btn btn-primary">Return to Main Menu</a></p>
 
     <!-- Include jQuery and Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -83,38 +87,87 @@
     </script>
 
     <script>
-        function applyFilters() {
-            var fromAccount = $('#fromAccount').val();
-            var toAccount = $('#toAccount').val();
-            var currency = $('#currency').val();
+        $(document).ready(function() {
+            // Bind the applyFilters function to the change event of filter inputs and order dropdown
+            $('#fromAccount, #toAccount, #currency, #order').change(applyFilters);
 
-            // Loop through each row in the table
-            $('#transactionsTable tbody tr').each(function() {
-                var showRow = true;
-
-                // Check the From Account filter
-                if (fromAccount && $(this).find('td:nth-child(1)').text().indexOf(fromAccount) === -1) {
-                    showRow = false;
+            function parseCustomDate(dateStr) {
+                // Split the date string into parts
+                var parts = dateStr.split(' at ');
+                if (parts.length === 2) {
+                    // Concatenate the date and time parts with a space in between
+                    var formattedDateStr = parts[0] + ' ' + parts[1];
+                    // Parse the formatted date string
+                    var parsedDate = new Date(formattedDateStr);
+                    if (!isNaN(parsedDate.getTime())) {
+                        return parsedDate;
+                    }
                 }
+                return null;
+            }
 
-                // Check the To Account filter
-                if (toAccount && $(this).find('td:nth-child(2)').text().indexOf(toAccount) === -1) {
-                    showRow = false;
-                }
+            function applyFilters() {
+                var fromAccount = $('#fromAccount').val();
+                var toAccount = $('#toAccount').val();
+                var currency = $('#currency').val();
+                var order = $('#order').val();
 
-                // Check the Currency filter
-                if (currency && $(this).find('td:nth-child(4)').text() !== currency) {
-                    showRow = false;
-                }
+                // Get all rows in the tbody
+                var rows = $('#transactionsTable tbody tr');
 
-                // Show or hide the row based on filter conditions
-                if (showRow) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-        }
+                // Sort the rows based on the created_at column
+                rows.sort(function(a, b) {
+                    // Extract raw date strings
+                    var dateAStr = $(a).find('td:nth-child(5)').text();
+                    var dateBStr = $(b).find('td:nth-child(5)').text();
+
+                    // Parse the dates using the custom parsing function
+                    var dateA = parseCustomDate(dateAStr);
+                    var dateB = parseCustomDate(dateBStr);
+
+                    if (!dateA || !dateB) {
+                        console.error("Invalid date format in table cells");
+                        return 0; // Return 0 to keep the original order
+                    }
+
+                    if (order === 'asc') {
+                        return dateA - dateB;
+                    } else {
+                        return dateB - dateA;
+                    }
+                });
+
+                // Re-append the sorted rows to the tbody
+                $('#transactionsTable tbody').empty().append(rows);
+
+                // Loop through each row in the table to apply other filters
+                rows.each(function() {
+                    var showRow = true;
+
+                    // Check the From Account filter
+                    if (fromAccount && $(this).find('td:nth-child(1)').text().indexOf(fromAccount) === -1) {
+                        showRow = false;
+                    }
+
+                    // Check the To Account filter
+                    if (toAccount && $(this).find('td:nth-child(2)').text().indexOf(toAccount) === -1) {
+                        showRow = false;
+                    }
+
+                    // Check the Currency filter
+                    if (currency && $(this).find('td:nth-child(4)').text() !== currency) {
+                        showRow = false;
+                    }
+
+                    // Show or hide the row based on filter conditions
+                    if (showRow) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+        });
     </script>
 
 </body>
